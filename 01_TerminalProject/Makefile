@@ -1,6 +1,9 @@
 CC = cc
 CFLAGS = -Wall -Wextra
 TARGET = Show
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
+DESTDIR ?=
 
 # ALT packages the wide library as -lncursesw; macOS exports it as -lncurses.
 NCURSES_LIB := $(shell \
@@ -11,12 +14,16 @@ NCURSES_LIB := $(shell \
 		rm -f "$$tmp"; echo -lncurses; \
 	fi)
 
-.PHONY: all clean
+.PHONY: all install clean
 
 all: $(TARGET)
 
 $(TARGET): Show.c
 	$(CC) $(CFLAGS) Show.c -o $(TARGET) $(NCURSES_LIB)
+
+install: $(TARGET)
+	install -d "$(DESTDIR)$(BINDIR)"
+	install -m 755 $(TARGET) "$(DESTDIR)$(BINDIR)/$(TARGET)"
 
 clean:
 	rm -f $(TARGET) *.o *~

@@ -73,7 +73,18 @@ static int load_text(Text *text, const char *path)
 		}
 
 		line = malloc((size_t)nread + 1);
+		if (line == NULL) {
+			free(buf);
+			fclose(fp);
+			return -1;
+		}
 		memcpy(line, buf, (size_t)nread + 1);
+		if (text_add(text, line) != 0) {
+			free(line);
+			free(buf);
+			fclose(fp);
+			return -1;
+		}
 	}
 
 	free(buf);
@@ -170,7 +181,7 @@ int main(int argc, char **argv)
 	}
 
 	setlocale(LC_ALL, "");
-ё
+	initscr();
 	cbreak();
 	noecho();
 	curs_set(0);
